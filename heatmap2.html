@@ -41,7 +41,7 @@
 <body>
 <div id="nav-container">
     <div class="nav left">left</div>
-    <div id="locationDropdown"></div>
+    <div id="timeDropdown"></div>
     <div class="nav right">right</div>
 </div>
 <div id="heatmap"></div>
@@ -91,9 +91,28 @@
   svg.append("g")
     .call(d3.axisLeft(y));
 
-  d3.json("https://raw.githubusercontent.com/zhuguotian/lesa_data_management/master/data/TOF02.json", function(data) {
+d3.json("https://raw.githubusercontent.com/zhuguotian/lesa_data_management/master/data/TOF02.json", function(data) {
 
-    // create a tooltip
+  //group data by timestamp
+  var nest = d3.nest()
+    .key(function(d)){return d.time}
+    .entries(data)
+
+  var timestamps = nest.map(function(d) {return d.key;});
+  var timestampmenu = d3.select("#timeDropdown");
+  timestampmenu
+    .append("select")
+    .attr("id", "timestampmenu")
+    .selectAll("option")
+      .data(time)
+      .enter()
+      .append("option")
+      .attr("value", function(d, i) { return i; })
+      .text(function(d) { return d; });
+
+
+
+  // create a tooltip
   var tooltip = d3.select("body")
     .append("div")
     .style("opacity", 0)
