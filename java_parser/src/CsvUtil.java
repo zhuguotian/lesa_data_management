@@ -4,11 +4,13 @@ import java.util.*;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+
+
+
 public class CsvUtil{
 	private String currentLine;
 	private BufferedReader br = null;
 	private List<String> list = new ArrayList<String>();
-
 	public CsvUtil(){
 
 	}
@@ -44,8 +46,8 @@ public class CsvUtil{
 	}
 	
 	//parse out single dist and there coord and combine with time into a JSONObject
-	public JSONObject parse_dist(List list, List time_list) {
-		JSONObject main = new JSONObject();
+	public JSONArray parse_dist(List list, List time_list) {
+		JSONArray main = new JSONArray();
 		
 		//for the given file, each distance data has a length of 4 bytes
 		int digits = 4;
@@ -54,7 +56,7 @@ public class CsvUtil{
 		
 		for(int i=0; i<list.size(); i++) {
 			String currentLine = (String) list.get(i);
-			JSONObject dist = new JSONObject();
+			
 			int x = 0;
 			int y = 1;
 			int flag = 0;
@@ -71,17 +73,25 @@ public class CsvUtil{
 						x=0;
 					}
 					x+=1;
-					String coord = String.valueOf(x)+','+String.valueOf(y);
+					//List<Integer> coord= Arrays.asList(x,y);
 					Integer number = Integer.valueOf(currentLine.substring(j, j+digits));
 					//System.out.println(number);
 					j+=digits;
-					dist.put(coord, number);
+					JSONObject dist = new JSONObject();
+					dist.put("xcoord", x);
+					dist.put("ycoord", y);
+					dist.put("distance", number);
+					dist.put("time", time_list.get(i));
+					main.put(dist);
+					
+					System.out.print(dist);
+					System.out.println(',');
+					
 				}
 				j++;
 			}
-			main.put(String.valueOf(time_list.get(i)), dist);
 		}
-		System.out.print(main);
+		//System.out.print(main);
 		return main;
 	}
 	
@@ -200,9 +210,10 @@ public class CsvUtil{
 		arr = csv.readcsv(filename);
 		
 		List<String> time_list = new ArrayList<String>();
-		JSONObject dist_list = new JSONObject();
+		JSONArray dist_list = new JSONArray();
 		time_list = csv.parse_time(list);
 		dist_list = csv.parse_dist(list, time_list);
+		//System.out.print(dist_list);
 	}	
 		
 }
