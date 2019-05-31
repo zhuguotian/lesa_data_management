@@ -106,11 +106,7 @@
 {"xcoord":6,"distance":2852,"time":"2019-04-17T13:51:29.337Z","ycoord":6},
 {"xcoord":7,"distance":2834,"time":"2019-04-17T13:51:29.337Z","ycoord":6},
 {"xcoord":8,"distance":2878,"time":"2019-04-17T13:51:29.337Z","ycoord":6},
-{"xcoord":9,"distance":2834,"time":"2
-	at CsvUtil.CsvClose(CsvUtil.java:167)
-	at CsvUtil.readcsv(CsvUtil.java:197)
-	at CsvUtil.main(CsvUtil.java:210)
-019-04-17T13:51:29.337Z","ycoord":6},
+{"xcoord":9,"distance":2834,"time":"2019-04-17T13:51:29.337Z","ycoord":6},
 {"xcoord":10,"distance":2819,"time":"2019-04-17T13:51:29.337Z","ycoord":6},
 {"xcoord":11,"distance":2819,"time":"2019-04-17T13:51:29.337Z","ycoord":6},
 {"xcoord":12,"distance":2803,"time":"2019-04-17T13:51:29.337Z","ycoord":6},
