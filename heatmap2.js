@@ -23,10 +23,10 @@ var svg = d3.select("#heatmap")
 
 // linear colour scale
 var colours = d3.scaleLinear()
-  .domain(d3.range(1, 11, 1))
-  .range(["#87cefa", "#86c6ef", "#85bde4", "#83b7d9", "#82afce", "#80a6c2", "#7e9fb8", "#7995aa", "#758b9e", "#708090"]);
+  .domain(d3.range(2000, 3000))
+  .range(["white", "#87cefa"]);
 
-var xLable = svg.selectAll(".xLable")
+var xLable = svg.selectAll(".xLable")Hello Günter
   .data(x_axis)
   .enter()
   .append("text")
@@ -47,93 +47,94 @@ var yLabel = svg.selectAll(".yLabel")
   .attr("transform", "translate(" + gridSize / 2 + ", -6)");
 
 // load data
-d3.json("https://raw.githubusercontent.com/zhuguotian/lesa_data_management/master/test.json", function(error, dataset) {
+d3.json("https://raw.githubusercontent.com/zhuguotian/lesa_data_management/master/data/TOF02.json", function(error, dataset) {
 
-  // group data by location
+  // group data by timestamp
   var nest = d3.nest()
-    .key(function(d) { return d.location; })
+    .key(function(d) { return d.time; })
     .entries(dataset);
 
   // array of locations in the data
-  var locations = nest.map(function(d) { return d.key; });
-  var currentLocationIndex = 0;
+  var timestamps = nest.map(function(d) { return d.key; });
+  var currentTimeIndex = 0;
 
   // create location dropdown menu
-  var locationMenu = d3.select("#locationDropdown");
-  locationMenu
+  var timeMenu = d3.select("#timeDropdown");
+  timeMenu
     .append("select")
-    .attr("id", "locationMenu")
+    .attr("id", "timeMenu")
     .selectAll("option")
-      .data(locations)
+      .data(timestamps)
       .enter()
       .append("option")
       .attr("value", function(d, i) { return i; })
       .text(function(d) { return d; });
 
-  // function to create the initial heatmap
-  var drawHeatmap = function(location) {
+  //draw initial heat-map
+  var drawHeatmap = function(time) {
 
-    // filter the data to return object of location of interest
-    var selectLocation = nest.find(function(d) {
-      return d.key == location;
+    // filter the data through timestamp
+    var selectTime = nest.find(function(d) {
+      return d.key == time;
     });
 
     var heatmap = svg.selectAll(".hour")
-      .data(selectLocation.values)
+      .data(selectTime.values)
       .enter()
       .append("rect")
-      .attr("x", function(d) { return (d.hour-1) * gridSize; })
-      .attr("y", function(d) { return (d.day-1) * gridSize; })
+      .attr("x", function(d) { return (d.ycoord-1) * gridSize; })
+      .attr("y", function(d) { return (d.xcoord-1) * gridSize; })
       .attr("class", "hour bordered")
       .attr("width", gridSize)
       .attr("height", gridSize)
       .style("stroke", "white")
       .style("stroke-opacity", 0.6)
-      .style("fill", function(d) { return colours(d.value); })
-    }
-  drawHeatmap(locations[currentLocationIndex]);
+      .style("fill", function(d) { return colours(d.distance); })
+  }
 
-  var updateHeatmap = function(location) {
-    console.log("currentLocationIndex: " + currentLocationIndex)
+  drawHeatmap(timestamps[currentTimeIndex]);
+
+  var updateHeatmap = function(time) {
+    console.log("currentTimeIndex: " + currentTimeIndex)
     // filter data to return object of location of interest
-    var selectLocation = nest.find(function(d) {
-      return d.key == location;
+    var selectTime = nest.find(function(d) {
+      return d.key == time;
     });
 
     // update the data and redraw heatmap
     var heatmap = svg.selectAll(".hour")
-      .data(selectLocation.values)
+      .data(selectTime.values)
       .transition()
         .duration(500)
-        .style("fill", function(d) { return colours(d.value); })
+        .style("fill", function(d) { return colours(d.distance); })
   }
 
   // run update function when dropdown selection changes
-  locationMenu.on("change", function() {
+  timeMenu.on("change", function() {
     // find which location was selected from the dropdown
     var selectedLocation = d3.select(this)
       .select("select")
-      .property("value");
-    currentLocationIndex = +selectedLocation;
+      .property("distance");
+    currentTimeIndex = +selectedLocation;
     // run update function with selected location
-    updateHeatmap(locations[currentLocationIndex]);
+    updateHeatmap(timestamps[currentTimeIndex]);
   });    
 
   d3.selectAll(".nav").on("click", function() {
     if(d3.select(this).classed("left")) {
-      if(currentLocationIndex == 0) {
-        currentLocationIndex = locations.length-1;
+      if(currentTimeIndex == 0) {
+        currentTimeIndex = timestamps.length-1;
       } else {
-        currentLocationIndex--;  
+        currentTimeIndex--;  
       }
     } else if(d3.select(this).classed("right")) {
-      if(currentLocationIndex == locations.length-1) {
-        currentLocationIndex = 0;
+      if(currentTimeIndex == timestamps.length-1) {
+        currentTimeIndex = 0;
       } else {
-        currentLocationIndex++;  
+        currentTimeIndex++;  
       }
     }
-    d3.select("#locationMenu").property("value", currentLocationIndex)
-    updateHeatmap(locations[currentLocationIndex]);
+    d3.select("#timeMenu").property("value", currentTimeIndex)
+    updateHeatmap(timestamps[currentTimeIndex]);
   })
 })

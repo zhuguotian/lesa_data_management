@@ -24,11 +24,12 @@ public class RESTful_test {
 	      is.close();
 	    }
 	}  
+	
 	public static void main(String[] args) throws IOException, JSONException {
 		String url = "http://data.smartlighting.rpi.edu/hadatac/api/deployments/all";
 		JSONObject json = RESTful_test.readJsonFromUrl(url); 
 		System.out.println(json.toString());
+		
 	}
-	
 	
 }
